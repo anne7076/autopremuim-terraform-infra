@@ -5,15 +5,32 @@ variable "small_machine_type" {
   type    = string
   default = "t3.micro"
 }
-variable "database_username" {
+
+# Database : 
+variable "app_db_username" {
   type      = string
   sensitive = true
   default   = "anne"
 }
-variable "database_password" {
-  type      = string
-  sensitive = true
-  default   = "changeme"
+variable "app_db_name" {
+  type = string
+  # default = "value"
+}
+variable "db" {
+  type = object({
+    engine         = string
+    engine_version = string
+  })
+  default = {
+    engine         = "mysql"
+    engine_version = "8.0"
+  }
+}
+
+# Application
+variable "app_replica" {
+  type = number
+  #   default = 1
 }
 variable "application_port" {
   type        = number
@@ -30,11 +47,11 @@ variable "internet_port" {
 #  OUTPUTS
 # ============================================
 output "db_hostname" {
-  value       = aws_db_instance.mysql_database.address
+  value       = aws_db_instance.database.address
   description = "the database dns name"
 }
 output "db_port" {
-  value = aws_db_instance.mysql_database.port
+  value = aws_db_instance.database.port
 }
 
 output "lb_hostname" {
@@ -43,5 +60,5 @@ output "lb_hostname" {
 }
 
 output "bucket_id" {
-  value = aws_s3_bucket.terraform_bucket.id
+  value = aws_s3_bucket.app_bucket.id
 }

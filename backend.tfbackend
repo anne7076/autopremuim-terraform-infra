@@ -1,0 +1,2 @@
+kms_key_id = "arn:aws:kms:us-east-1:108750422878:key/e3263ed6-247f-46ac-9830-1e18c9e2d25c"
+key        = "learning/terraform.tfstate"
