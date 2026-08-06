@@ -18,6 +18,11 @@ locals {
 provider "aws" {
   profile = local.is_localstack ? "localstack" : "default"
   region  = "us-east-1"
+  default_tags {
+    tags = {
+      "managedBy" = "Terraform"
+    }
+  }
 }
 
 data "aws_availability_zones" "zones" {
@@ -37,11 +42,13 @@ data "aws_ami" "amazon_linux" {
 }
 
 module "common_config" {
-  source = "../../shared_config"
+  source            = "../../shared_config"
+  supabase_url      = var.supabase_url
+  supabase_anon_key = var.supabase_anon_key
 }
 resource "aws_iam_instance_profile" "profile" {
   name_prefix = "ec2-iam-profile-"
-  role        = module.common_config.instance_role
+  role        = aws_iam_role.instance_role.name
 }
 resource "aws_launch_template" "instance_template" {
   name_prefix   = "autopremuim-template-"
@@ -164,6 +171,15 @@ variable "machine_type" {
   type    = string
   default = "t3.micro"
 }
+variable "supabase_url" {
+  type      = string
+  sensitive = true
+}
+variable "supabase_anon_key" {
+  type      = string
+  sensitive = true
+}
+
 
 # ============================================
 #  OUTPUTS
