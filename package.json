@@ -1,0 +1,15 @@
+{
+  "name": "autopremium-infrastructure-docs",
+  "version": "1.0.0",
+  "description": "AutoPremium AWS Infrastructure Documentation website",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.3.4",
+    "vitepress-plugin-mermaid": "^2.0.16",
+    "mermaid": "^10.9.0"
+  }
+}
