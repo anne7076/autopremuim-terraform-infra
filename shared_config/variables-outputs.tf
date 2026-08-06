@@ -29,13 +29,12 @@ variable "application_port" {
   description = "the port on which the application is running on"
 }
 variable "supabase_url" {
-  type    = string
-  default = "https://zvzpwvepwnpkburdxwzt.supabase.co"
+  type      = string
+  sensitive = true
 }
 variable "supabase_anon_key" {
-  type    = string
-  default = "sb_publishable_yq_TXgzfUP_JZ5bVxmtE-A_mieaM846"
-  #   TODO : SHOULD NOT BE EXPOSED
+  type      = string
+  sensitive = true
 }
 
 variable "internet_port" {
@@ -44,13 +43,15 @@ variable "internet_port" {
   description = "the port for the incoming tcp traffic, 80/443"
 }
 
+variable "lb_target_type" {
+  type        = string
+  default     = "instance"
+  description = "The target type of the Load Balancer target group (instance or ip)"
+}
+
 # ============================================
 #  OUTPUTS
 # ============================================
-output "instance_role" {
-  type  = string
-  value = aws_iam_role.instance_role.name
-}
 output "instance_sg" {
   type  = string
   value = aws_security_group.instnace_security.id
@@ -78,19 +79,41 @@ output "db_secret_id" {
 output "db_master_secret" {
   value = aws_db_instance.database.master_user_secret[0].secret_arn
 }
-
 output "github_actions_role" {
   type        = string
   value       = module.github_actions_role.name
   description = "Github Actions Role name"
 }
-
 output "github_actions_role_arn" {
   value = module.github_actions_role.arn
 }
 
-
 output "pulic_subnets" {
   type  = list(string)
   value = module.vpc.public_subnets
+}
+
+output "private_subnets" {
+  type  = list(string)
+  value = module.vpc.private_subnets
+}
+
+output "vpc_id" {
+  type  = string
+  value = module.vpc.vpc_id
+}
+
+output "lb_security_sg_id" {
+  type  = string
+  value = aws_security_group.lb_security.id
+}
+
+output "secrets_ssm_policy_arn" {
+  type  = string
+  value = aws_iam_policy.secrets_ssm_policy.arn
+}
+
+output "s3_policy_arn" {
+  type  = string
+  value = aws_iam_policy.s3_policy.arn
 }
