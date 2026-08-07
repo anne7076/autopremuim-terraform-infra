@@ -1,0 +1,65 @@
+name: Deploy Infrastructure to AWS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "deployments/**"
+      - "shared_config/**"
+      - ".github/workflows/deploy-infra.yml"
+
+permissions:
+  contents: read
+  id-token: write # Requis pour l'authentification OIDC AWS
+
+env:
+  TARGET_DIR: "02-ecs-fargate" # Dossier de déploiement par défaut
+  AWS_REGION: "us-east-1"
+  # Injection automatique des variables d'entrée sensibles requises par Terraform
+  TF_VAR_supabase_url: ${{ secrets.SUPABASE_URL }}
+  TF_VAR_supabase_anon_key: ${{ secrets.SUPABASE_ANON_KEY }}
+
+jobs:
+  deploy:
+    name: Terraform Deploy
+    runs-on: ubuntu-latest
+
+    # Meilleure pratique : Définir le répertoire de travail par défaut pour le job entier
+    defaults:
+      run:
+        working-directory: deployments/${{ env.TARGET_DIR }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Meilleure pratique : Authentification OIDC (sans clés statiques partagées)
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.15.8"
+
+      # Vérifie que le code Terraform respecte les standards de formatage
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        continue-on-error: true # Permet de ne pas bloquer le build si non formaté
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # Meilleure pratique : Séparer le Plan et l'Apply en figeant le plan d'exécution
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan -input=false
+
+      - name: Terraform Apply
+        run: terraform apply -input=false tfplan

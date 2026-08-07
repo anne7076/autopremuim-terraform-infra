@@ -30,3 +30,7 @@ override.tf.json
 
 temp/
 node_modules/
+
+# VitePress
+**/.vitepress/dist/
+**/.vitepress/cache/
