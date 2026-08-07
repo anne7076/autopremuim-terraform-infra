@@ -6,6 +6,14 @@ export default withMermaid(
     title: "AutoPremium Docs",
     description: "Documentation de l'infrastructure Cloud AWS d'AutoPremium",
     base: "/autopremuim-terraform-infra/",
+    head: [
+      ['style', {}, `
+        h1 img, h2 img, h3 img, h4 img, h5 img {
+          display: inline-block !important;
+          vertical-align: middle;
+        }
+      `]
+    ],
     themeConfig: {
       logo: 'https://unpkg.com/lucide-static@latest/icons/car.svg',
       nav: [
