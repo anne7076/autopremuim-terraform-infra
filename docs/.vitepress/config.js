@@ -16,7 +16,7 @@ export default withMermaid(
         {
           text: 'Infrastructure AWS',
           items: [
-            { text: 'Introduction', link: '/README' },
+            { text: 'Introduction', link: '/' },
             { text: '1. Fondations Réseau (VPC)', link: '/01-network-foundation' },
             { text: '2. Phase 1 : AutoScaling EC2', link: '/02-ec2-architecture' },
             { text: '3. Phase 2 : ECS Fargate', link: '/03-ecs-fargate-architecture' },
